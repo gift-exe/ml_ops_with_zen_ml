@@ -12,7 +12,7 @@ def clean_data(df:pd.DataFrame) -> Tuple[
                                             Annotated[pd.DataFrame, 'X_train'],
                                             Annotated[pd.DataFrame, 'X_test'],
                                             Annotated[pd.Series, 'y_train'],
-                                            Annotated[pd.Series, 'y_train'],
+                                            Annotated[pd.Series, 'y_test'],
                                         ]:
     '''
         Cleans and divides data into train and test sets
@@ -36,6 +36,8 @@ def clean_data(df:pd.DataFrame) -> Tuple[
         X_train, X_test, y_train, y_test = data_cleaning.handle_data()
 
         logging.info('Data Cleaning Completed')
+
+        return X_train, X_test, y_train, y_test
         
     except Exception as e:
         logging.error('Error cleaning data: {}'.format(e))

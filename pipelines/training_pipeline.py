@@ -8,9 +8,10 @@ from zenml_steps.model_eval import evaluate_model
 @pipeline
 def train_pipeline(datapath: str):
     df = ingest_data(datapath)
-    df = clean_data(df)
-    train_model(df)
-    evaluate_model(df)
+    X_train, X_test, y_train, y_test = clean_data(df)
+    model = train_model(X_train, X_test, y_train, y_test)
+    mse, r2, rmse = evaluate_model(model, X_test, y_test)
+    
 
 
 
