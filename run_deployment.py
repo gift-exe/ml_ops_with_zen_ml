@@ -57,26 +57,30 @@ def run_deployment(config:str, min_accuracy:float):
         'There you will also be able to compare two or more runs. \n\n'
     )
     
-    existing_services = mlflow_model_deployer_component.find_model_server(pipeline_name='continous_deployment_pipeline',
+    existing_services = mlflow_model_deployer_component.find_model_server(pipeline_name='continuous_deployment_pipeline',
                                                                           pipeline_step_name='mlflow_model_deployer_step',
                                                                           model_name='model')
 
-    print('Existing services: ',existing_services)
+    # print('Existing services: ',existing_services)
 
-    if existing_services:
+    if existing_services is not None:
         service = typing.cast(MLFlowDeploymentService, existing_services[0])
-        if service.is_running:
+        print(vars(service))
+        if service.status.state._name_ == 'ACTIVE':
             print(f'The MLflow prediction server is running locally as a daemon '
                   f'process service and accepts inference requests at: \n'
                   f'    {service.prediction_url}\n'
                   f'Top stop the service, run '
                   f'[italic green] `zenml model-deployer models delete {str(service.uuid)}`[/italic green].')
-        elif service.is_failed:
-            print(f'The MLflow prediction server is in a failed state: \n'
+        else:
+            print(f'The MLflow prediction server has an issue, and is not in an Active state: \n'
                   f'Last state: {service.status.last_state}\n'
-                  f'Last error: {service.status.last_error}')
+                  f'Current State: {service.status.state}\n'
+                  f'Last error: {service.status.last_error}\n'
+                  f'            {service.endpoint.status.last_error}')
     else:
-        print('No MLflow prediction server is currently running. '
+        print('Na here I dey, mess up')
+        print('No MLflow prediction service is currently running. '
               'The deployment pipeline must run first to train a model and deploy it. '
               'Execute the same command with the `--deploy` argument to deploy a model.')
 
